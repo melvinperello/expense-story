@@ -1,6 +1,7 @@
 from flask import render_template, url_for, flash, redirect
 from melvinperello_expense_story import app
 from melvinperello_expense_story.forms import LoginForm
+from melvinperello_expense_story.controllers import LoginController
 
 @app.route("/" , methods=['GET'])
 def home():
@@ -35,14 +36,19 @@ def login():
     Raises:
 
     """
-
-
     form = LoginForm()
-    if form.username.data == 'melvinperello' and form.password.data == '123456':
-            flash('You have been logged in!', 'success')
+    if form.validate_on_submit():
+        # form is valid
+        # proceed authentication
+        controller = LoginController()
+        controller.username = form.username.data
+        controller.password = form.password.data
+
+        if controller.authenticate():
             return redirect(url_for('accounts'))
-    else:
-        flash('Login Unsuccessful. Please check username and password', 'danger')
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'danger')
+
     return render_template('login.html', form=form)
 
 @app.route("/register" , methods=['GET','POST'])
