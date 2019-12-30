@@ -1,7 +1,6 @@
-from flask import render_template
+from flask import render_template, url_for, flash, redirect
 from melvinperello_expense_story import app
-
-
+from melvinperello_expense_story.forms import LoginForm
 
 @app.route("/" , methods=['GET'])
 def home():
@@ -36,7 +35,15 @@ def login():
     Raises:
 
     """
-    return "login"
+
+
+    form = LoginForm()
+    if form.username.data == 'melvinperello' and form.password.data == '123456':
+            flash('You have been logged in!', 'success')
+            return redirect(url_for('accounts'))
+    else:
+        flash('Login Unsuccessful. Please check username and password', 'danger')
+    return render_template('login.html', form=form)
 
 @app.route("/register" , methods=['GET','POST'])
 def register():
@@ -58,10 +65,10 @@ def register():
 
 @app.route("/accounts" , methods=['GET','POST'])
 def accounts():
-    """Display the registration page.
+    """Display all accounts owned by the user.
 
-    [GET]   Display the registration page form.
-    [POST]  Action handler to the registration form.
+    [GET]   Display all accounts for the user.
+    [POST]  Add account to the user.
 
     Args:
 
@@ -74,6 +81,60 @@ def accounts():
     """
     return "accounts"
 
-@app.route("/accounts/<int:id>" , methods=['GET','PUT','DELETE'])
-def account(id):
+@app.route("/accounts/<int:account_id>" , methods=['GET','PUT','DELETE'])
+def account(account_id):
+    """Display a specific account owned by the user.
+
+    [GET]   Display the account using the account id.
+    [PUT]   Update the account using the account id.
+    [DELETE] Delete the account using the account id.
+
+    Args:
+        account_id (int): the account id.
+
+    Returns:
+        HTML
+
+    Raises:
+
+    """
     return "account"
+
+@app.route("/transactions/accounts/<int:account_id>" , methods=['GET','POST'])
+def transactions(account_id):
+    """Display all transactions under the account owned by the user.
+
+    [GET]   Display all transactions under an account.
+    [POST]  Add transaction entry to the account.
+
+
+    Args:
+        account_id (int): the account id.
+
+    Returns:
+        HTML
+
+    Raises:
+
+    """
+    return "transactions"
+
+@app.route("/transactions/<int:transaction_id>" , methods=['GET','POST','GET'])
+def transaction(transaction_id):
+    """Display a single transaction using id.
+
+    [GET]   Show record of transaction using id.
+    [PUT]   Update the transaction using id.
+    [DELETE] Delete the transaction using id.
+
+
+    Args:
+        transaction_id (int): the transaction id.
+
+    Returns:
+        HTML
+
+    Raises:
+
+    """
+    return "transaction"
