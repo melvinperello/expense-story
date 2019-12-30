@@ -1,19 +1,21 @@
-#### atm_user
+#### es_user
 A user that will use the application with a username and password, each user can be associated to have multiple funds.
 
 | Constraints | Name | Type | Length | Null | Default | References |
 |:----------:|------|------|--------|:----:|:--------:|------------|
 | **PK** | **id** | integer |  | N | **Auto**| |
-|  | username | varchar | 255 | Y | | |
-|  | password | varchar | 255 | Y | | |
+|  | username | varchar | 30 | N | | |
+|  | password | varchar | 60 | N | | |
+|  | state | varchar | 20 | N | "CREATED" | |
+|  | role | varchar | 20 | N | "USER" | |
 
-#### atm_fund
+#### es_account
 The fund to to record, each fund is owned by only one user, a fund can have multiple fund transactions.
 
 | Constraints | Name | Type | Length | Null | Default | References |
 |:----------:|------|------|--------|:----:|:--------:|------------|
 | **PK** | **id** | integer |  | N | **Auto**| |
-| FK | user_id | integer |  | N | Ref | *atm_user*.**id**|
+| FK | user_id | integer |  | N | Ref | *es_user*.**id**|
 |  | description | varchar | 255 | Y | | |
 
 
