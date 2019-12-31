@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect
 from melvinperello_expense_story import app
-from melvinperello_expense_story.forms import LoginForm
-from melvinperello_expense_story.controllers import LoginController
+from melvinperello_expense_story.forms import LoginForm , RegisterForm
+from melvinperello_expense_story.controllers import LoginController , RegisterController
 
 @app.route("/" , methods=['GET'])
 def home():
@@ -67,7 +67,13 @@ def register():
     Raises:
 
     """
-    return "register"
+    form = RegisterForm()
+    if form.validate_on_submit():
+        controller = RegisterController()
+        controller.username = form.username.data
+        controller.password = form.password.data
+        controller.register()
+    return render_template('register.html', form=form)
 
 @app.route("/accounts" , methods=['GET','POST'])
 def accounts():
