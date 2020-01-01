@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, Length, Regexp, EqualTo
 from melvinperello_expense_story.controllers import RegisterController
 
@@ -39,3 +39,8 @@ class RegisterForm(FlaskForm):
     def validate_username(self, username):
         if RegisterController.isUsernameTaken(username.data):
             raise ValidationError('That username is taken. Please choose a different one.')
+
+class FundsAddForm(FlaskForm):
+    description = TextAreaField('Description',validators=[ DataRequired(), Length(min=1, max=255) ] )
+    fund_type = SelectField(u'Fund Type',choices=[('GENERAL', 'General'), ('INCOME', 'Income'), ('SAVINGS', 'Savings')] )
+    submit = SubmitField('Add')

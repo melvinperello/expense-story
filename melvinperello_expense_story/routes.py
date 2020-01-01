@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request
 from melvinperello_expense_story import app
-from melvinperello_expense_story.forms import LoginForm , RegisterForm
+from melvinperello_expense_story.forms import LoginForm , RegisterForm, FundsAddForm
 from melvinperello_expense_story.controllers import LoginController , RegisterController
 from flask_login import current_user, logout_user, login_required
 
@@ -108,8 +108,10 @@ def funds():
     Raises:
 
     """
-    print(vars(current_user))
-    return render_template('funds.html')
+    form = FundsAddForm()
+    if form.validate_on_submit():
+        pass
+    return render_template('funds.html', form=form)
 
 @app.route("/funds/<int:fund_id>" , methods=['GET','PUT','DELETE'])
 @login_required
