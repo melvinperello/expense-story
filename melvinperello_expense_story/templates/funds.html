@@ -5,6 +5,32 @@ ES - Funds
 {% endblock title %}
 
 {% block content %}
+
+
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Description</th>
+      <th scope="col">Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for fund in funds %}
+      <tr>
+        <td>{{fund.id}}</td>
+        <td>{{fund.description}}</td>
+        <td>{{fund.fund_type}}</td>
+      </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+
+
+
 <form method="POST" action="">
 
     {{ form.hidden_tag() }}

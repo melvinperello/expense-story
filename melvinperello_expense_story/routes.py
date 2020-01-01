@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request
 from melvinperello_expense_story import app
 from melvinperello_expense_story.forms import LoginForm , RegisterForm, FundsAddForm
-from melvinperello_expense_story.controllers import LoginController , RegisterController
+from melvinperello_expense_story.controllers import LoginController , RegisterController, FundController
 from flask_login import current_user, logout_user, login_required
 
 @app.route("/" , methods=['GET'])
@@ -110,8 +110,18 @@ def funds():
     """
     form = FundsAddForm()
     if form.validate_on_submit():
-        pass
-    return render_template('funds.html', form=form)
+        controller = FundController()
+        controller.description = form.description.data
+        controller.fund_type = form.fund_type.data
+        controller.user_id = current_user.id
+        if controller.insert():
+            flash('Fund Created !', 'success')
+            return redirect(url_for('funds'))
+        else:
+            flash('Something went wrong while adding new fund.', 'danger')
+
+    funds = FundController.getAll(current_user.id)
+    return render_template('funds.html', form=form , funds=funds)
 
 @app.route("/funds/<int:fund_id>" , methods=['GET','PUT','DELETE'])
 @login_required
