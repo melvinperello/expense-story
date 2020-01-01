@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, Length, Regexp, EqualTo
+from melvinperello_expense_story.controllers import RegisterController
 
 
 class LoginForm(FlaskForm):
@@ -19,6 +20,7 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me !')
     submit = SubmitField('Login')
 
+
 class RegisterForm(FlaskForm):
     """Register Form
 
@@ -33,3 +35,7 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[ DataRequired() , Length(min=8, max=30) , Regexp("^[a-zA-Z0-9]+$",message="Must contain letters or numbers" ) ])
     confirm_password = PasswordField('Confirm Password', validators=[ DataRequired(), EqualTo('password') ])
     submit = SubmitField('Register')
+
+    def validate_username(self, username):
+        if RegisterController.isUsernameTaken(username.data):
+            raise ValidationError('That username is taken. Please choose a different one.')

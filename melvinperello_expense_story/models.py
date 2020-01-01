@@ -1,6 +1,27 @@
-from melvinperello_expense_story import db
+from melvinperello_expense_story import db, login_manager
+from flask_login import UserMixin
 
-class User(db.Model):
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Call back for the Flask Login extension
+
+    allows the  flask login to get user session details.
+
+    Args:
+        user_id (int): user id.
+
+    Returns:
+        User
+
+    Raises:
+
+    """
+    return User.query.get(int(user_id))
+
+
+class User(db.Model, UserMixin):
     """User Model
 
     Object Representation of the User table.

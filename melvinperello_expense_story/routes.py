@@ -1,7 +1,8 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, request
 from melvinperello_expense_story import app
 from melvinperello_expense_story.forms import LoginForm , RegisterForm
 from melvinperello_expense_story.controllers import LoginController , RegisterController
+from flask_login import current_user, logout_user, login_required
 
 @app.route("/" , methods=['GET'])
 def home():
@@ -17,6 +18,8 @@ def home():
     Raises:
 
     """
+    if current_user.is_authenticated:
+        return redirect(url_for('funds'))
     return "home"
 
 
@@ -36,6 +39,9 @@ def login():
     Raises:
 
     """
+    if current_user.is_authenticated:
+        return redirect(url_for('funds'))
+
     form = LoginForm()
     if form.validate_on_submit():
         # form is valid
@@ -43,9 +49,11 @@ def login():
         controller = LoginController()
         controller.username = form.username.data
         controller.password = form.password.data
+        controller.remember = form.remember.data
 
         if controller.authenticate():
-            return redirect(url_for('accounts'))
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('funds'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
 
@@ -67,20 +75,29 @@ def register():
     Raises:
 
     """
+    if current_user.is_authenticated:
+        return redirect(url_for('funds'))
     form = RegisterForm()
     if form.validate_on_submit():
         controller = RegisterController()
         controller.username = form.username.data
         controller.password = form.password.data
-        controller.register()
+        if controller.register():
+            flash('Account successfully created !', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('Something went wrong while creating the account.', 'danger')
     return render_template('register.html', form=form)
 
-@app.route("/accounts" , methods=['GET','POST'])
-def accounts():
-    """Display all accounts owned by the user.
 
-    [GET]   Display all accounts for the user.
-    [POST]  Add account to the user.
+
+@app.route("/funds" , methods=['GET','POST'])
+@login_required
+def funds():
+    """Display all funds owned by the user.
+
+    [GET]   Display all funds for the user.
+    [POST]  Add fund to the user.
 
     Args:
 
@@ -91,18 +108,20 @@ def accounts():
     Raises:
 
     """
-    return "accounts"
+    print(vars(current_user))
+    return render_template('funds.html')
 
-@app.route("/accounts/<int:account_id>" , methods=['GET','PUT','DELETE'])
-def account(account_id):
-    """Display a specific account owned by the user.
+@app.route("/funds/<int:fund_id>" , methods=['GET','PUT','DELETE'])
+@login_required
+def fund(fund_id):
+    """Display a specific fund owned by the user.
 
-    [GET]   Display the account using the account id.
-    [PUT]   Update the account using the account id.
-    [DELETE] Delete the account using the account id.
+    [GET]   Display the fund using the fund id.
+    [PUT]   Update the fund using the fund id.
+    [DELETE] Delete the fund using the fund id.
 
     Args:
-        account_id (int): the account id.
+        fund_id (int): the fund id.
 
     Returns:
         HTML
@@ -110,18 +129,19 @@ def account(account_id):
     Raises:
 
     """
-    return "account"
+    return "fund"
 
-@app.route("/transactions/accounts/<int:account_id>" , methods=['GET','POST'])
-def transactions(account_id):
-    """Display all transactions under the account owned by the user.
+@app.route("/transactions/funds/<int:fund_id>" , methods=['GET','POST'])
+@login_required
+def transactions(fund_id):
+    """Display all transactions under the fund owned by the user.
 
-    [GET]   Display all transactions under an account.
-    [POST]  Add transaction entry to the account.
+    [GET]   Display all transactions under an fund.
+    [POST]  Add transaction entry to the fund.
 
 
     Args:
-        account_id (int): the account id.
+        fund_id (int): the fund id.
 
     Returns:
         HTML
@@ -132,6 +152,7 @@ def transactions(account_id):
     return "transactions"
 
 @app.route("/transactions/<int:transaction_id>" , methods=['GET','POST','GET'])
+@login_required
 def transaction(transaction_id):
     """Display a single transaction using id.
 
