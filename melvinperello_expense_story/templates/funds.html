@@ -14,6 +14,7 @@ ES - Funds
       <th scope="col">ID</th>
       <th scope="col">Description</th>
       <th scope="col">Type</th>
+      <th scope="col">Action</th>
     </tr>
   </thead>
   <tbody>
@@ -22,6 +23,9 @@ ES - Funds
         <td>{{fund.id}}</td>
         <td>{{fund.description}}</td>
         <td>{{fund.fund_type}}</td>
+        <td> <a href="#update_fund" data-params="{&quot_id&quot:{{fund.id}}}">Update</a>
+            |
+            <a href="#delete_fund" data-params="{ &quot_id&quot:{{fund.id}} , &quot_call&quot:&quot{{url_for('fund',fund_id=0)}}&quot }">Delete</a> </td>
       </tr>
     {% endfor %}
 
@@ -64,4 +68,6 @@ ES - Funds
 
     {{ form.submit(class="btn btn-primary") }}
   </form>
+
+  <script type="text/javascript" src="{{url_for('static',filename='funds.js')}}"></script>
 {% endblock content %}

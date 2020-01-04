@@ -141,6 +141,12 @@ def fund(fund_id):
     Raises:
 
     """
+    if request.method == 'GET':
+        print('GET')
+    elif request.method == 'PUT':
+        print('PUT')
+    elif request.method == 'DELETE':
+        print('DELETE')
     return "fund"
 
 @app.route("/transactions/funds/<int:fund_id>" , methods=['GET','POST'])
